@@ -111,7 +111,7 @@ The AERIS-10 main sub-systems are:
    - Map integration
    - Radar control interface
 
-![AERIS-10 Radar System](9_Firmware/GUI_V6.gif)
+![AERIS-10 Radar System](9_Firmware/9_3_GUI/GUI_V6.gif)
 
 ## 📊 Technical Specifications
 

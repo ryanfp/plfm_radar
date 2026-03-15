@@ -1,6 +1,7 @@
 // gps_handler.cpp
 #include "gps_handler.h"
 #include <cmath>
+#include <cstdio>
 
 // UART handle for communication with GUI
 static UART_HandleTypeDef* gui_huart = NULL;
@@ -16,6 +17,10 @@ void GPS_Init(UART_HandleTypeDef* huart)
 
 uint8_t GPS_IsDataValid(GPS_Data_t* gps_data)
 {
+    if (gps_data == NULL) {
+        return 0;
+    }
+
     // Check if GPS data is within valid ranges
     if (gps_data->latitude < -90.0 || gps_data->latitude > 90.0)
         return 0;
@@ -27,11 +32,11 @@ uint8_t GPS_IsDataValid(GPS_Data_t* gps_data)
     return 1;
 }
 
-void GPS_ProcessData(GPS_Data_t* gps_data)
+bool GPS_ProcessData(GPS_Data_t* gps_data)
 {
     // Validate GPS data
     if (!GPS_IsDataValid(gps_data)) {
-        return;
+        return false;
     }
     
     // Update current GPS data
@@ -39,12 +44,14 @@ void GPS_ProcessData(GPS_Data_t* gps_data)
     current_gps.timestamp = HAL_GetTick();
     
     // Send to GUI
-    GPS_SendToGUI(&current_gps);
+    return GPS_SendToGUI(&current_gps);
 }
 
-void GPS_SendToGUI(GPS_Data_t* gps_data)
+bool GPS_SendToGUI(GPS_Data_t* gps_data)
 {
-    if (gui_huart == NULL) return;
+    if (gui_huart == NULL || gps_data == NULL) {
+        return false;
+    }
     
     // Create packet: "GPS:lat,lon,alt\r\n"
     char buffer[64];
@@ -55,16 +62,20 @@ void GPS_SendToGUI(GPS_Data_t* gps_data)
                       gps_data->longitude,
                       gps_data->altitude);
     
-    if (len > 0 && len < (int)sizeof(buffer)) {
-        // Send via UART3 to GUI
-        HAL_UART_Transmit(gui_huart, (uint8_t*)buffer, len, 1000);
+    if (len <= 0 || len >= (int)sizeof(buffer)) {
+        return false;
     }
+
+    // Send via UART3 to GUI
+    return HAL_UART_Transmit(gui_huart, (uint8_t*)buffer, len, 1000) == HAL_OK;
 }
 
 // Alternative binary protocol version (more efficient)
-void GPS_SendBinaryToGUI(GPS_Data_t* gps_data)
+bool GPS_SendBinaryToGUI(GPS_Data_t* gps_data)
 {
-    if (gui_huart == NULL) return;
+    if (gui_huart == NULL || gps_data == NULL) {
+        return false;
+    }
     
     // Binary packet structure:
     // [Header 4 bytes][Latitude 8 bytes][Longitude 8 bytes][Altitude 4 bytes][Pitch 4 bytes][CRC 2 bytes]
@@ -99,7 +110,7 @@ void GPS_SendBinaryToGUI(GPS_Data_t* gps_data)
         packet[20 + i] = (alt_bits >> (24 - i*8)) & 0xFF;
     }
     
-    // Convert float altitude to bytes (big-endian)
+    // Convert float pitch to bytes (big-endian)
     uint32_t pitch_bits;
     memcpy(&pitch_bits, &gps_data->pitch, sizeof(float));
     for(int i = 0; i < 4; i++) {
@@ -115,5 +126,5 @@ void GPS_SendBinaryToGUI(GPS_Data_t* gps_data)
     packet[29] = crc & 0xFF;
     
     // Send binary packet
-    CDC_Transmit_FS(packet, sizeof(packet));
+    return CDC_Transmit_FS(packet, sizeof(packet)) == USBD_OK;
 }

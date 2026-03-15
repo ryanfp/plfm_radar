@@ -1526,9 +1526,12 @@ int main(void)
 
   GPS_Data_t gps_data;
   // Binary packet structure:
-  // [Header 4 bytes][Latitude 8 bytes][Longitude 8 bytes][Altitude 4 bytes][CRC 2 bytes]
+  // [Header 4 bytes][Latitude 8 bytes][Longitude 8 bytes][Altitude 4 bytes][Pitch 4 bytes][CRC 2 bytes]
   gps_data = {RADAR_Latitude, RADAR_Longitude, RADAR_Altitude, Pitch_Sensor, HAL_GetTick()};
-  GPS_SendBinaryToGUI(&gps_data);
+  if (!GPS_SendBinaryToGUI(&gps_data)) {
+      const uint8_t gps_send_error[] = "GPS binary send failed\r\n";
+      HAL_UART_Transmit(&huart3, (uint8_t*)gps_send_error, sizeof(gps_send_error) - 1, 1000);
+  }
 
   // Check if start flag was received and settings are ready
   do{

@@ -5,6 +5,7 @@
 #include "main.h"
 #include "usb_device.h"
 #include "usbd_cdc_if.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -21,9 +22,9 @@ typedef struct {
 } GPS_Data_t;
 
 void GPS_Init(UART_HandleTypeDef* huart);
-void GPS_ProcessData(GPS_Data_t* gps_data);
-void GPS_SendToGUI(GPS_Data_t* gps_data);
-void GPS_SendBinaryToGUI(GPS_Data_t* gps_data);
+bool GPS_ProcessData(GPS_Data_t* gps_data);
+bool GPS_SendToGUI(GPS_Data_t* gps_data);
+bool GPS_SendBinaryToGUI(GPS_Data_t* gps_data);
 uint8_t GPS_IsDataValid(GPS_Data_t* gps_data);
 
 #ifdef __cplusplus

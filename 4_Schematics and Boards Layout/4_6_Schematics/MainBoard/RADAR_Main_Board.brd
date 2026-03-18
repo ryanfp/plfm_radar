@@ -6,12 +6,12 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.003125" altunitdist="mic" altunit="mm"/>
+<grid distance="0.05" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="0.003125" altunitdist="mic" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="16" fill="1" visible="no" active="yes"/>
-<layer number="3" name="Route3" color="17" fill="1" visible="yes" active="yes"/>
-<layer number="4" name="Route4" color="18" fill="1" visible="yes" active="yes"/>
+<layer number="3" name="Route3" color="10" fill="1" visible="yes" active="yes"/>
+<layer number="4" name="Route4" color="14" fill="1" visible="yes" active="yes"/>
 <layer number="5" name="Route5" color="19" fill="1" visible="no" active="yes"/>
 <layer number="6" name="Route6" color="25" fill="1" visible="no" active="no"/>
 <layer number="7" name="Route7" color="26" fill="1" visible="no" active="no"/>
@@ -19,9 +19,9 @@
 <layer number="9" name="Route9" color="28" fill="1" visible="no" active="no"/>
 <layer number="10" name="Route10" color="29" fill="1" visible="no" active="no"/>
 <layer number="11" name="Route11" color="30" fill="1" visible="no" active="no"/>
-<layer number="12" name="Route12" color="23" fill="1" visible="yes" active="yes"/>
+<layer number="12" name="Route12" color="13" fill="1" visible="yes" active="yes"/>
 <layer number="13" name="Route13" color="21" fill="1" visible="no" active="yes"/>
-<layer number="14" name="Route14" color="22" fill="1" visible="yes" active="yes"/>
+<layer number="14" name="Route14" color="11" fill="1" visible="yes" active="yes"/>
 <layer number="15" name="Route15" color="23" fill="1" visible="no" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
@@ -27445,9 +27445,12 @@ Your PCBWay Team
 <wire x1="57.080959375" y1="185.830959375" x2="56.5" y2="185.25" width="0.1" layer="14"/>
 <wire x1="210" y1="232.75" x2="212.3213625" y2="235.0713625" width="0.1" layer="12"/>
 <wire x1="212.3213625" y1="235.0713625" x2="229.232915625" y2="235.0713625" width="0.1" layer="12"/>
-<wire x1="229.232915625" y1="235.0713625" x2="230.441921875" y2="236.28036875" width="0.1" layer="12"/>
-<wire x1="230.441921875" y1="236.28036875" x2="236.71963125" y2="236.28036875" width="0.1" layer="12"/>
-<wire x1="236.71963125" y1="236.28036875" x2="238.25" y2="234.75" width="0.1" layer="12"/>
+<wire x1="238.25" y1="234.75" x2="237.55" y2="235.45" width="0.1" layer="12"/>
+<wire x1="237.55" y1="235.45" x2="236.35" y2="235.45" width="0.1" layer="12"/>
+<wire x1="236.35" y1="235.45" x2="234.55" y2="237.25" width="0.1" layer="12"/>
+<wire x1="234.55" y1="237.25" x2="230.5" y2="237.25" width="0.1" layer="12"/>
+<wire x1="230.5" y1="237.25" x2="230.25" y2="237" width="0.1" layer="12"/>
+<wire x1="230.25" y1="237" x2="229.232915625" y2="235.0713625" width="0.1" layer="12"/>
 </signal>
 <signal name="ADC_DCO_P" class="1">
 <contactref element="R12" pad="2"/>

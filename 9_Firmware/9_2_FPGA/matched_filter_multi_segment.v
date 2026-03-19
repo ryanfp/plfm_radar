@@ -454,7 +454,7 @@ always @(posedge clk or negedge reset_n) begin
             ST_OVERLAP_COPY: begin
                 // Write one cached overlap sample per cycle to BRAM
                 buf_we <= 1;
-                buf_waddr <= overlap_copy_count[9:0];
+                buf_waddr <= {{2{1'b0}}, overlap_copy_count};
                 buf_wdata_i <= overlap_cache_i[overlap_copy_count];
                 buf_wdata_q <= overlap_cache_q[overlap_copy_count];
                 
@@ -475,6 +475,10 @@ always @(posedge clk or negedge reset_n) begin
                         state <= ST_IDLE;
                     end
                 end
+            end
+            
+            default: begin
+                state <= ST_IDLE;
             end
         endcase
         

@@ -54,10 +54,10 @@ add_files -fileset constrs_1 -norecurse [file join $project_root "constraints" "
 # We still set them here for any DRC checks run in the parent context
 # (e.g., report_drc after open_run).
 #
-# BIVC-1: Bank 14 VCCO=3.3V with LVDS_25 IBUFDS inputs + LVCMOS33 adc_pwdn.
-# IBUFDS inputs are VCCO-independent on 7-series (internal diff amplifier).
-# The DRC is conservative — aimed at OBUFDS outputs where VCCO affects swing.
-# Bank 14 has only LVDS *inputs*, so demoting to warning is safe.
+# BIVC-1: Bank 14 VCCO=2.5V (enforced by LVDS_25) with LVCMOS25 adc_pwdn.
+# This should no longer fire now that adc_pwdn is LVCMOS25, but we keep
+# the waiver as a safety net in case future XDC changes re-introduce the
+# conflict.
 set_property SEVERITY {Warning} [get_drc_checks BIVC-1]
 
 # NSTD-1 / UCIO-1: 118 unconstrained port bits — FT601 USB 3.0 (chip unwired

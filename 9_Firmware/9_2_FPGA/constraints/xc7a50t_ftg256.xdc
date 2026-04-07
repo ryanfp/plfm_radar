@@ -12,7 +12,7 @@
 #
 # I/O Bank Voltage Summary:
 #   Bank 0:  VCCO = 3.3V (JTAG, flash CS)
-#   Bank 14: VCCO = 3.3V (ADC LVDS data, SPI flash, adc_pwdn)
+#   Bank 14: VCCO = 2.5V (ADC LVDS_25 data — placer-enforced; adc_pwdn as LVCMOS25)
 #   Bank 15: VCCO = 3.3V (DAC, clocks, STM32 SPI 3.3V side, DIG bus, mixer)
 #   Bank 34: VCCO = 1.8V (ADAR1000 beamformer control, SPI 1.8V side)
 #   Bank 35: VCCO = 3.3V (unused — no signal connections)
@@ -20,11 +20,11 @@
 # DRC Fix History:
 #   - PLIO-9: Moved clk_120m_dac from C13 (N-type) to D13 (P-type MRCC).
 #     Clock inputs must use the P-type pin of a Multi-Region Clock-Capable pair.
-#   - BIVC-1: Bank 14 has VCCO=3.3V but LVDS inputs require LVDS_25 (no LVDS_33
-#     on 7-series, LVDS requires HP banks). IBUFDS input buffers are VCCO-
-#     independent — they work correctly with any VCCO. The BIVC-1 DRC is
-#     conservative (aimed at OBUFDS outputs). Waived via set_property SEVERITY
-#     in the build script. adc_pwdn (LVCMOS33) coexists in the same bank.
+#   - BIVC-1 / Place 30-372: Bank 14 must have a single VCCO. LVDS_25 forces
+#     VCCO=2.5V, so adc_pwdn was changed from LVCMOS33 to LVCMOS25 to match.
+#     IBUFDS input buffers are VCCO-independent. BIVC-1 also waived via
+#     set_property SEVERITY in the build script as an additional safety net.
+#     in the build script. adc_pwdn (LVCMOS25) coexists in the same bank.
 #   - UCIO/NSTD: 118 unconstrained ports (FT601 unwired, status/debug outputs
 #     have no physical pins). Handled with SEVERITY demotion + default IOSTANDARD.
 # ============================================================================
@@ -237,13 +237,15 @@ set_property PACKAGE_PIN R7  [get_ports {adc_d_n[7]}]
 # ADC DCO Clock (LVDS) — already constrained above in CLOCK section
 
 # ADC Power Down — ADC_PWRD net (single-ended, Bank 14)
+# Uses LVCMOS25 to be voltage-compatible with LVDS_25 in the same bank.
+# The placer enforces a single VCCO per bank; LVDS_25 demands VCCO=2.5V.
+# LVCMOS25 output drives the AD9484 PWDN pin (CMOS threshold ~0.8V) safely.
+# On the physical board (VCCO=3.3V), output swings follow actual VCCO.
 set_property PACKAGE_PIN T5 [get_ports {adc_pwdn}]
-set_property IOSTANDARD LVCMOS33 [get_ports {adc_pwdn}]
+set_property IOSTANDARD LVCMOS25 [get_ports {adc_pwdn}]
 
 # LVDS I/O Standard — LVDS_25 is the only valid differential input standard
 # on 7-series HR banks. IBUFDS inputs work correctly regardless of VCCO.
-# The BIVC-1 DRC (conflict with LVCMOS33 adc_pwdn at VCCO=3.3V) is waived
-# in the build script since Bank 14 has only LVDS *inputs*, no outputs.
 set_property IOSTANDARD LVDS_25 [get_ports {adc_d_p[*]}]
 set_property IOSTANDARD LVDS_25 [get_ports {adc_d_n[*]}]
 
